@@ -1,5 +1,6 @@
 import type { Config } from 'tailwindcss'
 import tailwindcssAnimate from 'tailwindcss-animate'
+import tailwindTypography from '@tailwindcss/typography'
 
 const config = {
   darkMode: ['class'],
@@ -68,11 +69,16 @@ const config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        'gradient': {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        gradient: "animatedgradient 6s ease infinite alternate",
+        'gradient': "gradient 6s ease infinite alternate",
       },
       backgroundSize: {
         '300%': '300%',
@@ -80,7 +86,7 @@ const config = {
     },
   },
   // plugins: [require('tailwindcss-animate')],
-  plugins: [tailwindcssAnimate],
+  plugins: [tailwindcssAnimate, tailwindTypography],
 } satisfies Config
 
 export default config
