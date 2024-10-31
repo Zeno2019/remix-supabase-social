@@ -1,9 +1,39 @@
-import { Link } from '@remix-run/react';
+import { json, Link, redirect, useOutletContext } from '@remix-run/react';
 import { OpenmojiPoutingCat as AppLogo } from '~/components/openmoji-pouting-cat';
 import { Button } from '~/components/ui/button';
 import { Icon } from '@iconify/react';
+import type { SupabaseOutletContext } from '~/lib/supabase';
+import { LoaderFunctionArgs } from '@remix-run/node';
+import { getSupabaseWithSessionHeaders } from '~/lib/supabase.server';
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const { headers, serverSession } = await getSupabaseWithSessionHeaders({ request });
+
+  if (serverSession) {
+    return redirect('/catposts', { headers });
+  }
+
+  return json({ success: true }, { headers });
+};
 
 export default function Login() {
+  const { supabase, domainUrl } = useOutletContext<SupabaseOutletContext>();
+
+  const handleSignIn = async () => {
+    console.info('Login with Github');
+
+    await supabase.auth.signInWithOAuth({
+      provider: 'github',
+      options: {
+        redirectTo: `${domainUrl}/resources/auth/callback`,
+      },
+    });
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
+
   return (
     <section className='w-full bg-white min-h-screen flex flex-col'>
       <nav className='flex items-center p-4'>
@@ -29,8 +59,7 @@ export default function Login() {
 
           <p className='text-gray-500 mt-2'>Our posts and comments are powered by Markdown</p>
         </div>
-        <Button className='bg-gradient-to-r from-orange-700 via-indigo-500 to-green-400 bg-300% animate-gradient' onClick={() => console.info('Login with Github')}>
-          {/* <Icon icon='logos:github-icon' /> */}
+        <Button className='bg-gradient-to-r from-orange-700 via-indigo-500 to-green-400 bg-300% animate-gradient' onClick={() => handleSignIn()}>
           <Icon icon='uim:github-alt' className='size-4' />
           Github
         </Button>

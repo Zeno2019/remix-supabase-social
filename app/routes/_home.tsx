@@ -1,12 +1,18 @@
-import { Link, Outlet } from '@remix-run/react';
+import { Link, Outlet, useOutletContext } from '@remix-run/react';
 import { useState } from 'react';
 import { OpenmojiPoutingCat as AppLogo } from '~/components/openmoji-pouting-cat';
 import { Icon } from '@iconify/react';
 import { cn } from '~/lib/utils';
 import { Button } from '~/components/ui/button';
+import type { SupabaseOutletContext } from '~/lib/supabase';
 
 export default function Home() {
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const { supabase } = useOutletContext<SupabaseOutletContext>();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
 
   return (
     <section className='w-full bg-white min-h-screen flex flex-col items-center'>
@@ -20,10 +26,13 @@ export default function Home() {
           {isNavOpen ? <Icon icon='si:close-fill' /> : <Icon icon='ci:hamburger-md' />}
         </button>
 
-        <div className={cn('flex items-center space-x-2', isNavOpen ? 'flex-col order-last w-full md:w-auto' : 'hidden md:flex')}>
-          <Link to={`/profile/${null}`}>Anonymous</Link>
+        <div className={cn('flex items-center space-x-2 gap-1', isNavOpen ? 'flex-col order-last w-full md:w-auto' : 'hidden md:flex')}>
 
-          {/* <img
+          <Link to={`/profile/zenost`}>@zenost</Link>
+
+          {/* <Link to={`/profile/${null}`}>Anonymous</Link> */}
+
+          <img
             className='rounded-full'
             height={40}
             width={40}
@@ -32,10 +41,13 @@ export default function Home() {
               aspectRatio: '40/40',
               objectFit: 'cover',
             }}
-            src=''
-          /> */}
-          <Icon icon='mdi:anonymous-circle' className='rounded-full size-[2.5rem] object-cover aspect-square' />
-          <Button variant='secondary'>Logout</Button>
+            src='https://avatars.githubusercontent.com/u/29234804?v=4'
+          />
+
+          {/* <Icon icon='mdi:anonymous-circle' className='rounded-full size-[2.5rem] object-cover aspect-square' /> */}
+          <Button variant='secondary' onClick={() => handleSignOut()}>
+            Logout
+          </Button>
         </div>
       </nav>
 

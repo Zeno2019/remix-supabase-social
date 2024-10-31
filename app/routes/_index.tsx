@@ -1,7 +1,19 @@
-import { Link } from '@remix-run/react';
+import { LoaderFunctionArgs } from '@remix-run/node';
+import { json, Link, redirect } from '@remix-run/react';
 import { OpenmojiPoutingCat as AppLogo } from '~/components/openmoji-pouting-cat';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
+import { getSupabaseWithSessionHeaders } from '~/lib/supabase.server';
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const { headers, serverSession } = await getSupabaseWithSessionHeaders({ request });
+
+  if (serverSession) {
+    return redirect('/catposts', { headers });
+  }
+
+  return json({ success: true }, { headers });
+};
 
 export default function Index() {
   return (
@@ -11,15 +23,16 @@ export default function Index() {
         <h1 className='text-xl font-semibold text-zinc-900'>Catposter</h1>
       </nav>
       <div className='container md:flex justify-center items-center px-4 md:px-6 flex-1'>
-
         <div className='flex flex-col items-center space-y-4 text-center p-4 md:w-1/2'>
           <h1 className='text-3xl md:text-5xl font-bold tracking-tighter'>
-
-            A <span className='font-extrabold bg-gradient-to-r from-orange-700 via-indigo-500 to-green-400 text-transparent bg-clip-text bg-300% 
+            A{' '}
+            <span
+              className='font-extrabold bg-gradient-to-r from-orange-700 via-indigo-500 to-green-400 text-transparent bg-clip-text bg-300% 
             animate-gradient
-            '>Community-Driven</span> Minimalist
-            Social Platform for Coders
-
+            '>
+              Community-Driven
+            </span>{' '}
+            Minimalist Social Platform for Coders
           </h1>
 
           <p className='text-gray-500 mt-2'>

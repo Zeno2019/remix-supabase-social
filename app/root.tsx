@@ -1,33 +1,43 @@
-import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
+import { json, Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from '@remix-run/react';
+import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
 
-import "./tailwind.css";
+import './tailwind.css';
+import { getSupabaseEnv, getSupabaseWithSessionHeaders } from './lib/supabase.server';
+import { useSupabase } from './lib/supabase';
 
 export const links: LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
   {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
+    rel: 'preconnect',
+    href: 'https://fonts.gstatic.com',
+    crossOrigin: 'anonymous',
   },
   {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    rel: 'stylesheet',
+    href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap',
   },
 ];
 
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const { serverSession, headers } = await getSupabaseWithSessionHeaders({ request });
+
+  const domainUrl = process.env.DOMAIN_URL;
+  const env = getSupabaseEnv();
+
+  return json(
+    { serverSession, env, domainUrl },
+    {
+      headers,
+    }
+  );
+};
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta charSet='utf-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
         <Meta />
         <Links />
       </head>
@@ -41,5 +51,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const { env, serverSession, domainUrl } = useLoaderData<typeof loader>();
+
+  const { supabase } = useSupabase({ env, serverSession });
+
+  return <Outlet context={{ supabase, domainUrl }} />;
 }
