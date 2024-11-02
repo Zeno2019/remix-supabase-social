@@ -2,7 +2,7 @@ import { Link } from '@remix-run/react';
 import { Avatar, AvatarImage } from './ui/avatar';
 import { Card } from './ui/card';
 import { Skeleton } from './ui/skeleton';
-import { OpenmojiPoutingCat as AppLogo } from '~/components/openmoji-pouting-cat';
+import {  AppLogo } from '~/components/app-logo';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 

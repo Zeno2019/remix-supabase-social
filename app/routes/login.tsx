@@ -1,5 +1,5 @@
 import { json, Link, redirect, useOutletContext } from '@remix-run/react';
-import { OpenmojiPoutingCat as AppLogo } from '~/components/openmoji-pouting-cat';
+import {  AppLogo } from '~/components/app-logo';
 import { Button } from '~/components/ui/button';
 import { Icon } from '@iconify/react';
 import type { SupabaseOutletContext } from '~/lib/supabase';

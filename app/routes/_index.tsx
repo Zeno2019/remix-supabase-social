@@ -1,6 +1,6 @@
 import { LoaderFunctionArgs } from '@remix-run/node';
 import { json, Link, redirect } from '@remix-run/react';
-import { OpenmojiPoutingCat as AppLogo } from '~/components/openmoji-pouting-cat';
+import {  AppLogo } from '~/components/app-logo';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { getSupabaseWithSessionHeaders } from '~/lib/supabase.server';

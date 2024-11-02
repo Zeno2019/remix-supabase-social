@@ -1,6 +1,6 @@
 import { json, Link, Outlet, redirect, useLoaderData, useOutletContext } from '@remix-run/react';
 import { useState } from 'react';
-import { OpenmojiPoutingCat as AppLogo } from '~/components/openmoji-pouting-cat';
+import {  AppLogo } from '~/components/app-logo';
 import { Icon } from '@iconify/react';
 import { cn, getUserDataFromSession } from '~/lib/utils';
 import { Button } from '~/components/ui/button';
