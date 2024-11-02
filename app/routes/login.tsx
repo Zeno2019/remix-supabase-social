@@ -5,6 +5,7 @@ import { Icon } from '@iconify/react';
 import type { SupabaseOutletContext } from '~/lib/supabase';
 import { LoaderFunctionArgs } from '@remix-run/node';
 import { getSupabaseWithSessionHeaders } from '~/lib/supabase.server';
+import { Provider } from '@supabase/supabase-js';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { headers, serverSession } = await getSupabaseWithSessionHeaders({ request });
@@ -19,11 +20,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Login() {
   const { supabase, domainUrl } = useOutletContext<SupabaseOutletContext>();
 
-  const handleSignIn = async () => {
-    console.info('Login with Github');
+  const handleSignIn = async (provider: Provider) => {
+    console.info(`Login with ${provider}`);
 
     await supabase.auth.signInWithOAuth({
-      provider: 'github',
+      provider,
       options: {
         redirectTo: `${domainUrl}/resources/auth/callback`,
       },
@@ -59,10 +60,20 @@ export default function Login() {
 
           <p className='text-gray-500 mt-2'>Our posts and comments are powered by Markdown</p>
         </div>
-        <Button className='bg-gradient-to-r from-orange-700 via-indigo-500 to-green-400 bg-300% animate-gradient' onClick={() => handleSignIn()}>
-          <Icon icon='uim:github-alt' className='size-4' />
-          Github
-        </Button>
+
+        <div className='flex flex-col items-center space-y-4'>
+          <Button className='bg-gradient-to-r from-orange-700 via-indigo-500 to-green-400 bg-300% animate-gradient' onClick={() => handleSignIn('github')}>
+            <Icon icon='uim:github-alt' className='size-4' />
+            Github
+          </Button>
+
+          <Button className='bg-gradient-to-r from-orange-700 via-indigo-500 to-green-400 bg-300% animate-gradient' onClick={() => handleSignIn('google')}>
+            <Icon icon='uim:google' className='size-4' />
+            Google
+          </Button>
+
+          <Button onClick={() => handleSignOut()}> Dev to logout</Button>
+        </div>
       </div>
     </section>
   );

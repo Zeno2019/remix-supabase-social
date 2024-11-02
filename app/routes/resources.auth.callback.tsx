@@ -11,7 +11,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     console.error('Error Auth callback:', {
-      request,
+      // request,
       code,
       error,
       next,

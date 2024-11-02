@@ -19,13 +19,13 @@ export type PostProps = {
 
 export function PostSkeleton() {
   return (
-    <div className='flex space-x-4 min-h-[12rem] my-3 p-8'>
+    <Card className='flex space-x-4 min-h-[12rem] my-3 p-8'>
       <Skeleton className='size-12 rounded-full' />
       <div className='space-y-2'>
         <Skeleton className='h-4 w-[15rem]' />
         <Skeleton className='h-4 w-[13rem]' />
       </div>
-    </div>
+    </Card>
   );
 }
 

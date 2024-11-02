@@ -1,16 +1,16 @@
 import { type LoaderFunctionArgs } from '@remix-run/node';
 import { json, redirect, useLoaderData, useNavigation } from '@remix-run/react';
+import { InfiniteVirtualList } from '~/components/infinite-virtual-list';
 import { PostSearch } from '~/components/post-search';
-import { Post } from '~/components/posts';
 import { Separator } from '~/components/ui/separator';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '~/components/ui/tabs';
-import { ViewComments } from '~/components/view-comments';
-import { ViewLikes } from '~/components/view-likes';
 import { WritePost } from '~/components/write-post';
+import { getAllPostsWithDetails } from '~/lib/database.server';
 import { getSupabaseWithSessionHeaders } from '~/lib/supabase.server';
+import { combinePostsWithLikes, getUserDataFromSession } from '~/lib/utils';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { headers, serverSession } = await getSupabaseWithSessionHeaders({ request });
+  const { headers, serverSession, supabase } = await getSupabaseWithSessionHeaders({ request });
 
   if (!serverSession) {
     return redirect('/login', { headers });
@@ -19,32 +19,35 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const searchParams = url.searchParams;
   const query = searchParams.get('query');
+  const page = Number(searchParams.get('page')) || 1;
 
-  return json({ query }, { headers });
+  const { data, totalPages } = await getAllPostsWithDetails({ dbClient: supabase, page: isNaN(page) ? 1 : page, searchQuery: query });
+
+  const {
+    userId: serverUserId,
+    // userName,
+    // userAvatarUrl,
+  } = getUserDataFromSession(serverSession);
+
+  const posts = combinePostsWithLikes(data, serverUserId);
+
+  return json({ query, posts, userDetail: { serverUserId }, totalPages }, { headers });
 };
 
 export default function Catposts() {
   const navigation = useNavigation();
+  const {
+    query,
+    posts,
+    userDetail: { serverUserId },
+    totalPages,
+  } = useLoaderData<typeof loader>();
+
+  const post = posts[0];
+  console.info('post:', { posts, post });
 
   // means that I am typing something in my search field and my page is reloading
   const isSearching = Boolean(navigation?.location && new URLSearchParams(navigation.location.search).has('query'));
-
-  const { query } = useLoaderData<typeof loader>();
-
-  const mockUserInfo = {
-    id: '321',
-    userId: '12345',
-    name: 'zeno',
-    username: 'zenost',
-    title: '## markdown title',
-    dateTimeString: '2022-01-01',
-    avatarUrl: 'https://avatars.githubusercontent.com/u/29234804?v=4',
-  };
-
-  const mockViewLikes = {
-    likes: 89,
-    pathname: '/profile/zenost',
-  };
 
   return (
     <div className='w-full max-w-xl px-4 flex flex-col'>
@@ -57,21 +60,10 @@ export default function Catposts() {
         <TabsContent value='view-posts'>
           <Separator />
           <PostSearch searchQuery={query} isSearching={isSearching} />
-          <Post
-            id={mockUserInfo.id}
-            avatarUrl={mockUserInfo.avatarUrl}
-            userId={mockUserInfo.userId}
-            name={mockUserInfo.name}
-            username={mockUserInfo.username}
-            title={mockUserInfo.title}
-            dateTimeString={mockUserInfo.dateTimeString}>
-            <ViewLikes likes={mockViewLikes.likes} likeByUser={false} pathname={mockViewLikes.pathname} />
-            <ViewComments number={420} pathname={mockViewLikes.pathname} />
-            <div></div>
-          </Post>
+          <InfiniteVirtualList incomingPosts={posts} totalPages={totalPages} />
         </TabsContent>
         <TabsContent value='write-post'>
-          <WritePost sessionUserId={mockUserInfo.userId} postId={mockUserInfo.id} />
+          <WritePost sessionUserId={serverUserId} />
         </TabsContent>
       </Tabs>
     </div>

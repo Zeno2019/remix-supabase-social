@@ -34,8 +34,18 @@ export function getSupabaseWithHeaders({ request }: { request: Request }) {
 export async function getSupabaseWithSessionHeaders({ request }: { request: Request }) {
   const { supabase, headers } = getSupabaseWithHeaders({ request });
   const {
+    error: serverSessionError,
     data: { session: serverSession },
   } = await supabase.auth.getSession();
+
+  // const {
+  //   error,
+  //   data: { user },
+  // } = await supabase.auth.getUser();
+
+  // if (error) {
+  //   console.error('getUser error', { serverSessionError, error, user });
+  // }
 
   return { supabase, headers, serverSession };
 }
