@@ -43,9 +43,6 @@ export default function Catposts() {
     totalPages,
   } = useLoaderData<typeof loader>();
 
-  const post = posts[0];
-  console.info('post:', { posts, post });
-
   // means that I am typing something in my search field and my page is reloading
   const isSearching = Boolean(navigation?.location && new URLSearchParams(navigation.location.search).has('query'));
 

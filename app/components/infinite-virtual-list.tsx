@@ -5,7 +5,7 @@ import { MemoizedPostListItem } from './memoized-post-list-item';
 import {  AppLogo } from '~/components/app-logo';
 import { PostSkeleton } from './posts';
 
-export function InfiniteVirtualList({ totalPages, incomingPosts }: { totalPages: number; incomingPosts: CombinedPostsWithAuthorAndLikes }) {
+export function InfiniteVirtualList({ totalPages, incomingPosts, isProfile }: { totalPages: number; incomingPosts: CombinedPostsWithAuthorAndLikes, isProfile?: boolean }) {
   const { posts, loadMore, hasMorePages } = useInfinitePosts({
     incomingPosts,
     totalPages,

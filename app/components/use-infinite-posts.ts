@@ -1,4 +1,4 @@
-import { useFetcher } from '@remix-run/react';
+import { useFetcher, useLocation } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { CombinedPostsWithAuthorAndLikes } from '~/lib/types';
 import type { loader as postsLoader } from '~/routes/_home.catposts';
@@ -21,11 +21,21 @@ export const useInfinitePosts = ({ incomingPosts, totalPages, postRouteId }: Use
     setCurrentPage(1);
   }
 
+  const location = useLocation();
+
   const hasMorePages = currentPage < totalPages;
 
   const loadMore = () => {
     if (hasMorePages && fetcher.state === 'idle') {
-      fetcher.load(`/catposts?page=${currentPage + 1}`);
+      let fullSearchQueryParams = '';
+
+      if (location.search) {
+        fullSearchQueryParams = `${location.search}&page=${currentPage + 1}`;
+      } else {
+        fullSearchQueryParams = `?page=${currentPage + 1}`;
+      }
+
+      fetcher.load(`${location.pathname}/${fullSearchQueryParams}`);
     }
   };
 
