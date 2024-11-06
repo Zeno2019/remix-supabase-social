@@ -1,4 +1,4 @@
-import { createServerClient, parse, parseCookieHeader, serialize, serializeCookieHeader } from '@supabase/ssr';
+import { createServerClient, parseCookieHeader, serializeCookieHeader } from '@supabase/ssr';
 import { Database } from 'database.types';
 
 export const getSupabaseEnv = () => ({
@@ -21,11 +21,6 @@ export function getSupabaseWithHeaders({ request }: { request: Request }) {
         cookiesToSet.forEach(({ name, value, options }) => headers.append('Set-Cookie', serializeCookieHeader(name, value, options)));
       },
     },
-
-    // auth: {
-    //   detectSessionInUrl: true,
-    //   flowType: 'pkce',
-    // },
   });
 
   return { supabase, headers };
@@ -37,15 +32,6 @@ export async function getSupabaseWithSessionHeaders({ request }: { request: Requ
     error: serverSessionError,
     data: { session: serverSession },
   } = await supabase.auth.getSession();
-
-  // const {
-  //   error,
-  //   data: { user },
-  // } = await supabase.auth.getUser();
-
-  // if (error) {
-  //   console.error('getUser error', { serverSessionError, error, user });
-  // }
 
   return { supabase, headers, serverSession };
 }

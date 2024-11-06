@@ -72,3 +72,58 @@ export async function getPostsForUser({ dbClient, page, userId, limit = 10 }: { 
     totalPages: count ? Math.ceil(count / limit) : 1,
   };
 }
+
+export async function insertLike({ dbClient, userId, postId }: { dbClient: SupabaseClient<Database>; userId: string; postId: string }) {
+  const { error } = await dbClient.from('likes').insert({
+    user_id: userId,
+    post_id: postId,
+    created_at: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+  });
+
+  if (error) {
+    console.error('Error occured at insertLike: ', error);
+  }
+
+  return { error };
+}
+
+export async function deleteLike({ dbClient, userId, postId }: { dbClient: SupabaseClient<Database>; userId: string; postId: string }) {
+  const { error } = await dbClient.from('likes').delete().match({ user_id: userId, post_id: postId });
+
+  if (error) {
+    console.error('Error occured at deleteLike: ', error);
+  }
+
+  return { error };
+}
+
+export async function insertComment({ dbClient, userId, title, postId }: { dbClient: SupabaseClient<Database>; userId: string; title: string; postId: string }) {
+  const { error } = await dbClient.from('comments').insert({
+    user_id: userId,
+    title,
+    post_id: postId,
+    created_at: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+  });
+
+  if (error) {
+    console.error('Error occured at insertComment: ', error);
+  }
+
+  return { error };
+}
+
+export async function getPostWithDetailsById({ dbClient, postId }: { dbClient: SupabaseClient<Database>; postId: string }) {
+  const postQuery = dbClient
+    .from('posts')
+    .select('*, author: profiles(*), likes(user_id), comments(*, author: profiles(username, avatar_url))')
+    .order('created_at', { foreignTable: 'comments', ascending: false })
+    .eq('id', postId);
+
+  const { data, error } = await postQuery;
+
+  if (error) {
+    console.error('Error occured during getPostWithDetailsById: ', error);
+  }
+
+  return { data, error };
+}

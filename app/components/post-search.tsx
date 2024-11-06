@@ -43,7 +43,7 @@ export function PostSearch({ searchQuery, isSearching }: { searchQuery: string |
               //  this form submit updates the query information
               submit(formRef.current);
             } else {
-              console.error('???');
+              console.error('wtf is this happening?');
             }
           }, 300);
         }}>

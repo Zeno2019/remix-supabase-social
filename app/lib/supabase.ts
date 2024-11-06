@@ -32,15 +32,8 @@ export const useSupabase = ({ env, serverSession }: UseSupabase) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      console.info('Auth event happend:', event, session);
-
       if (session?.access_token !== serverAccessToken) {
         // call loaders
-        console.info('serverAccessToken changed:', {
-          serverAccessToken,
-          session,
-        });
-
         revalidator.revalidate();
       }
     });
@@ -67,4 +60,3 @@ export const useSupabase = ({ env, serverSession }: UseSupabase) => {
 //     )
 //     .subscribe();
 // }
-

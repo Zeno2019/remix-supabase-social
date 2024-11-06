@@ -8,26 +8,27 @@ import { Icon } from '@iconify/react';
 type WritePostProps = {
   sessionUserId: string;
   postId?: string;
-  isComment?: boolean;
 };
 
-export function WritePost({ sessionUserId, postId, isComment }: WritePostProps) {
+export function WritePost({ sessionUserId, postId }: WritePostProps) {
   const fetcher = useFetcher();
   const [title, setTitle] = useState('');
   const isPosting = fetcher?.state !== 'idle';
   const isDisabled = isPosting || !title;
-  const postActionUrl = '/resources/post';
+  const isComment = Boolean(postId);
+
+  const postActionUrl = isComment ? '/resources/comment' : '/resources/post';
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const postTitle = () => {
-    console.info('Posting to server');
     const formData = {
       title,
       userId: sessionUserId,
+      ...(isComment ? { postId } : {}),
     };
 
-    fetcher.submit(formData, { method: 'post', action: postActionUrl });
+    fetcher.submit(formData, { method: 'POST', action: postActionUrl });
     setTitle('');
   };
 
@@ -40,6 +41,20 @@ export function WritePost({ sessionUserId, postId, isComment }: WritePostProps) 
       textareaRef.current.style.height = `${height}px`;
     }
   }, [title]);
+
+  if (isComment) {
+    return (
+      <Card className='mb-4'>
+        <CardContent className='p-4 text-right'>
+          <Textarea ref={textareaRef} placeholder='Type your comment here !!!' value={title} onChange={(e) => setTitle(e.target.value)} className='mb-2' />
+          <Button onClick={postTitle} disabled={isDisabled}>
+            {isPosting && <Icon icon='radix-icons:update' className='mr-2 h-4 w-4 animate-spin' />}
+            {isPosting ? 'Commenting...' : 'Comment'}
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>

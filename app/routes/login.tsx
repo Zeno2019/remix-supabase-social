@@ -1,5 +1,5 @@
 import { json, Link, redirect, useOutletContext } from '@remix-run/react';
-import {  AppLogo } from '~/components/app-logo';
+import { AppLogo } from '~/components/app-logo';
 import { Button } from '~/components/ui/button';
 import { Icon } from '@iconify/react';
 import type { SupabaseOutletContext } from '~/lib/supabase';
@@ -21,8 +21,6 @@ export default function Login() {
   const { supabase, domainUrl } = useOutletContext<SupabaseOutletContext>();
 
   const handleSignIn = async (provider: Provider) => {
-    console.info(`Login with ${provider}`);
-
     await supabase.auth.signInWithOAuth({
       provider,
       options: {
@@ -67,12 +65,12 @@ export default function Login() {
             Github
           </Button>
 
-          <Button className='bg-gradient-to-r from-orange-700 via-indigo-500 to-green-400 bg-300% animate-gradient' onClick={() => handleSignIn('google')}>
+          {/* <Button className='bg-gradient-to-r from-orange-700 via-indigo-500 to-green-400 bg-300% animate-gradient' onClick={() => handleSignIn('google')}>
             <Icon icon='uim:google' className='size-4' />
             Google
           </Button>
-
-          <Button onClick={() => handleSignOut()}> Dev to logout</Button>
+ */}
+          {/* <Button onClick={() => handleSignOut()}> Dev to logout</Button> */}
         </div>
       </div>
     </section>

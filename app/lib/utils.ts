@@ -1,7 +1,7 @@
 import type { Session } from '@supabase/supabase-js';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import type { PostWithDetails } from './types';
+import type { PostWithCommentDetails, PostWithDetails } from './types';
 
 import { format, parseISO } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
@@ -72,12 +72,34 @@ export function combinePostsWithLikes(data: PostWithDetails[] | null, sessionUse
     data?.map((post) => {
       return {
         ...post,
-        isLikedByUser: !!post.likes.find((like) => like.user_id === sessionUserId),
+        isLikedByUser: Boolean(post.likes.find((like) => like.user_id === sessionUserId)),
         likes: post.likes,
         comments: post.comments,
         author: post.author!,
       };
     }) ?? [];
+
+  return posts;
+}
+
+export function combinePostsWithLikesAndComments(data: PostWithCommentDetails[] | null, sessionUserId: string) {
+  const posts = data?.map((post) => {
+    const commentsWithAvatarUrl = post.comments.map((comment) => ({
+      ...comment,
+      author: {
+        avatar_url: comment.author?.avatar_url,
+        username: comment.author?.username,
+      },
+    }));
+
+    return {
+      ...post,
+      isLikedByUser: Boolean(post.likes.find((like) => like.user_id === sessionUserId)),
+      likes: post.likes,
+      comments: commentsWithAvatarUrl,
+      author: post.author!,
+    };
+  }) ?? [];
 
   return posts;
 }
