@@ -4,6 +4,7 @@ import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
 import './tailwind.css';
 import { getSupabaseEnv, getSupabaseWithSessionHeaders } from './lib/supabase.server';
 import { useSupabase } from './lib/supabase';
+import { Toaster } from './components/ui/toaster';
 
 export const links: LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -41,10 +42,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className='overscroll-none'>
         {children}
         <ScrollRestoration />
         <Scripts />
+        <Toaster />
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
 import { type LoaderFunctionArgs } from '@remix-run/node';
-import { json, Outlet, redirect, useLoaderData, useNavigation } from '@remix-run/react';
+import { json, Outlet, redirect, ShouldRevalidateFunctionArgs, useLoaderData, useNavigation } from '@remix-run/react';
 import { InfiniteVirtualList } from '~/components/infinite-virtual-list';
 import { PostSearch } from '~/components/post-search';
 import { Separator } from '~/components/ui/separator';
@@ -33,6 +33,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   return json({ query, posts, userDetail: { serverUserId }, totalPages }, { headers });
 };
+
+export function shouldRevalidate({ actionResult, defaultShouldRevalidate }: ShouldRevalidateFunctionArgs) {
+  const skipRevalidation = actionResult?.skipRevalidation && actionResult?.skipRevalidation?.includes('catposts');
+
+  if (skipRevalidation) {
+    return false;
+  }
+
+  return defaultShouldRevalidate;
+}
 
 export default function Catposts() {
   const navigation = useNavigation();

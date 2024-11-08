@@ -1,5 +1,5 @@
 import { json, LoaderFunctionArgs } from '@remix-run/node';
-import { Link, Outlet, redirect, useLoaderData } from '@remix-run/react';
+import { Link, Outlet, redirect, ShouldRevalidateFunctionArgs, useLoaderData } from '@remix-run/react';
 import { InfiniteVirtualList } from '~/components/infinite-virtual-list';
 import { Avatar, AvatarImage } from '~/components/ui/avatar';
 import { Separator } from '~/components/ui/separator';
@@ -64,6 +64,16 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     }
   );
 };
+
+export function shouldRevalidate({ actionResult, defaultShouldRevalidate }: ShouldRevalidateFunctionArgs) {
+  const skipRevalidation = actionResult?.skipRevalidation && actionResult?.skipRevalidation?.includes('profile.$username');
+
+  if (skipRevalidation) {
+    return false;
+  }
+
+  return defaultShouldRevalidate;
+}
 
 export default function Profile() {
   const {

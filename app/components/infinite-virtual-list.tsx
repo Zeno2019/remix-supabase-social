@@ -2,14 +2,19 @@ import type { CombinedPostsWithAuthorAndLikes } from '~/lib/types';
 import { useInfinitePosts } from './use-infinite-posts';
 import { Virtuoso } from 'react-virtuoso';
 import { MemoizedPostListItem } from './memoized-post-list-item';
-import {  AppLogo } from '~/components/app-logo';
+import { AppLogo } from '~/components/app-logo';
 import { PostSkeleton } from './posts';
 
-export function InfiniteVirtualList({ totalPages, incomingPosts, isProfile }: { totalPages: number; incomingPosts: CombinedPostsWithAuthorAndLikes, isProfile?: boolean }) {
+export function InfiniteVirtualList({ totalPages, incomingPosts, isProfile }: { totalPages: number; incomingPosts: CombinedPostsWithAuthorAndLikes; isProfile?: boolean }) {
+
+  const postRouteId = isProfile ? 'routes/_home.profile.$username.$postId' : 'routes/_home.catposts.$postId';
+
   const { posts, loadMore, hasMorePages } = useInfinitePosts({
     incomingPosts,
     totalPages,
+    postRouteId,
   });
+
 
   if (!posts.length) {
     return (

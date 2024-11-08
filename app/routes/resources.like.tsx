@@ -2,7 +2,7 @@ import { Icon } from '@iconify/react';
 import { ActionFunctionArgs, json, redirect } from '@remix-run/node';
 import { useFetcher } from '@remix-run/react';
 import { useEffect } from 'react';
-import { useToast } from '~/hooks/use-toast';
+import { useToast } from '~/components/hooks/use-toast';
 import { deleteLike, insertLike } from '~/lib/database.server';
 import { getSupabaseWithSessionHeaders } from '~/lib/supabase.server';
 import { cn } from '~/lib/utils';
@@ -68,11 +68,12 @@ export function Like({ likedByUser, likes, postId, sessionUserId }: LikeProps) {
 
   useEffect(() => {
     if (fetcher.data?.error && !isLoading) {
-      console.error('Error occured');
+      const error = fetcher.data?.error;
+      console.error('Error occured in like', { error, isLoading });
 
       toast({
         variant: 'destructive',
-        description: `Error occured: ${fetcher.data?.error}`,
+        description: `Error occured: ${error}`,
       });
     }
   }, [fetcher.data, isLoading, toast]);
@@ -82,7 +83,7 @@ export function Like({ likedByUser, likes, postId, sessionUserId }: LikeProps) {
       <input type='hidden' name='postId' value={postId} />
       <input type='hidden' name='userId' value={sessionUserId} />
       <input type='hidden' name='action' value={optimisticLikedByUser ? 'unlike' : 'like'} />
-      <button className='group flex items-center focus:outline-none'>
+      <button className='group flex items-center focus:outline-none' disabled={isLoading}>
         <Icon icon='solar:star-line-duotone' className={cn('size-4  group-hover:text-indigo-400', optimisticLikedByUser ? 'text-indigo-700' : 'text-muted-foreground')} />
         <span className={cn('ml-1 text-sm group-hover:text-indigo-400', optimisticLikedByUser ? 'text-indigo-700' : 'text-muted-foreground')}>{optimisticLikes}</span>
       </button>
