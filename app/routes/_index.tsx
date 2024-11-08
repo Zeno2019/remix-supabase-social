@@ -32,7 +32,7 @@ export default function Index() {
             '>
               Community-Driven
             </span>{' '}
-            Minimalist Social Platform for Coders
+            Minimalist Social Platform for Coders & Cats
           </h1>
 
           <p className='text-gray-500 mt-2'>
@@ -46,7 +46,7 @@ export default function Index() {
         <Card className='relative group overflow-hidden rounded-lg md:w-1/2'>
           <CardContent className='p-1'>
             <video className='size-full rounded-lg' autoPlay loop muted>
-              {/* <source src='assets/videos/demo.mp4' type='video/mp4'></source> */}
+              <source src='assets/videos/catposter-demo.mp4' type='video/mp4'></source>
             </video>
           </CardContent>
         </Card>

@@ -1,9 +1,10 @@
 import { useFetcher } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
-import { Card, CardHeader, CardContent, CardDescription, CardTitle, CardFooter } from './ui/card';
-import { Button } from './ui/button';
-import { Textarea } from './ui/textarea';
+import { Card, CardHeader, CardContent, CardDescription, CardTitle, CardFooter } from '~/components/ui/card';
+import { Button } from '~/components/ui/button';
+import { Textarea } from '~/components/ui/textarea';
 import { Icon } from '@iconify/react';
+import { useToast } from '~/components/hooks/use-toast';
 
 type WritePostProps = {
   sessionUserId: string;
@@ -12,6 +13,7 @@ type WritePostProps = {
 
 export function WritePost({ sessionUserId, postId }: WritePostProps) {
   const fetcher = useFetcher();
+  const { toast } = useToast();
   const [title, setTitle] = useState('');
   const isPosting = fetcher?.state !== 'idle';
   const isDisabled = isPosting || !title;
@@ -31,6 +33,16 @@ export function WritePost({ sessionUserId, postId }: WritePostProps) {
     fetcher.submit(formData, { method: 'POST', action: postActionUrl });
     setTitle('');
   };
+
+  // action done toast
+  useEffect(() => {
+    if (fetcher.state === 'idle' && fetcher.data) {
+      toast({
+        title: 'Posting done',
+        description: 'Your post has been posted',
+      });
+    }
+  }, [fetcher.state, fetcher.data]);
 
   useEffect(() => {
     if (textareaRef?.current) {

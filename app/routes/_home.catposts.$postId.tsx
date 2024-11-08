@@ -86,7 +86,7 @@ export default function CurrentPost() {
                 })}
               </div>
             ) : (
-              <div className='flex justify-center items-center h-[30vh] '>
+              <div className='flex justify-center items-center min-h-[8vh] max-h-[30vh] '>
                 <AppLogo className='size-10 opacity-10' />
                 <h2 className='ml-2'>No comments yet !!</h2>
               </div>
