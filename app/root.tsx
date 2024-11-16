@@ -1,5 +1,5 @@
 import { json, Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from '@remix-run/react';
-import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
+import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 
 import './tailwind.css';
 import { getSupabaseEnv, getSupabaseWithSessionHeaders } from './lib/supabase.server';
@@ -31,6 +31,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       headers,
     }
   );
+};
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Cat Poster" },
+    { name: "description", content: "Welcome to Cat Poster!" },
+  ];
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
